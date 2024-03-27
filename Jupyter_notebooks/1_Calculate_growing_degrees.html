@@ -14604,7 +14604,7 @@ body[data-format='mobile'] .jp-OutputArea-child .jp-OutputArea-output {
 <span class="n">up_thresh</span> <span class="o">=</span> <span class="mi">30</span> <span class="c1">#C</span>
 <span class="n">dn_thresh</span> <span class="o">=</span> <span class="mi">10</span> <span class="c1">#C</span>
 
-<span class="n">field_data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span> <span class="s2">&quot;../data/Masternote Washburn.csv&quot;</span><span class="p">)</span>
+<span class="n">field_data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span> <span class="s2">&quot;../data/Masternote Washburn with yield.csv&quot;</span><span class="p">)</span>
 <span class="n">sow_date</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">field_data</span><span class="p">[</span><span class="s1">&#39;Date Plot Planted [MM/DD/YY]&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">()[</span><span class="mi">0</span><span class="p">])</span>
 <span class="n">met_data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">&quot;../data/2020_Bradford_MOH1_weather.csv&quot;</span><span class="p">)</span>
 </pre></div>

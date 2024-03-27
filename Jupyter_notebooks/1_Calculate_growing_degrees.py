@@ -18,7 +18,7 @@ units = "C"
 up_thresh = 30 #C
 dn_thresh = 10 #C
 
-field_data = pd.read_csv( "../data/Masternote Washburn.csv")
+field_data = pd.read_csv( "../data/Masternote Washburn with yield.csv")
 sow_date = pd.to_datetime(field_data['Date Plot Planted [MM/DD/YY]'].unique()[0])
 met_data = pd.read_csv("../data/2020_Bradford_MOH1_weather.csv")
 
