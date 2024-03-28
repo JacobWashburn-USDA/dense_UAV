@@ -4,9 +4,10 @@ library(lme4)
 library(lme4)
 library(ggplot2)
 
-setwd("E:\\Dr Washburn_C5a_PHTs")
+setwd("C:/Users/jdwr47/Documents/For_New_Comp/dense_UAV") # set to the root repository directory ("dense_UAV")
 
-df <- read.csv("FinalC5ab.csv")
+
+df <- read.csv("data/FinalC5ab.csv")
 
 str(df)
 df$Range <- as.factor(df$Range)
@@ -297,7 +298,7 @@ hist(Blup_PHT$`(Intercept)`)
 ##############################################
 ########## ANOVA for  YLD ############
 ##############################################
-df2 <- read.csv("Masternote Washburn with yield.csv")
+df2 <- read.csv("data/Masternote Washburn with yield.csv")
 
 str(df2)
 df2$Range <- as.factor(df2$Range)
@@ -341,7 +342,7 @@ hist(Blup_YLD$`(Intercept)`)
 ##############################################
 ########## ANOVA for  EHT ############
 ##############################################
-df2 <- read.csv("Masternote Washburn with yield.csv")
+df2 <- read.csv("data/Masternote Washburn with yield.csv")
 
 str(df2)
 df2$Range <- as.factor(df2$Range)
@@ -461,10 +462,10 @@ data <- data[,-1]
 data <- data %>% mutate_if(is.numeric, function(x) ifelse(is.na(x), median(x, na.rm = T), x))
 pc <- prcomp(data, , center = TRUE, scale. = TRUE)
 df  <-pc$x
-write.csv(df, "E:/Dr Washburn_C5a_PHTs/pca.csv")
+write.csv(df, "data/pca.csv")
 
 
-df <- read.csv("pca.csv")
+df <- read.csv("data/pca.csv")
 head(df)
 df1 <- df[(!df$Group %in% c("Canadian", "Other")),]
 
@@ -473,7 +474,7 @@ df1 <- df[(!df$Group %in% c("Canadian", "Other")),]
 p_pca <- ggplot(df1, aes(x=PC1, y=PC2, group=Group)) +
   geom_point(aes(shape=Group, color=Group))+theme_classic()
 
-jpeg("E:/Dr Washburn_C5a_PHTs/pca_Tphts.jpeg", width = 6,height = 4,units = "in", res=300)
+jpeg("data/pca_Tphts.jpeg", width = 6,height = 4,units = "in", res=300)
 p_pca
 
 dev.off()
@@ -500,6 +501,7 @@ fp <- as.data.frame(lapply(fp, unlist))
 #fp_subset <- subset(fp, Tester=="PHZ51" | Tester=="PHK76" | Tester=="PHP02")
 
 fp_subset <- fp[grepl('W10004', fp$Pedigree), ]
+write.csv(fp_subset, "data/Tpht_subset.csv")
 
 
 library(stringr)
@@ -535,7 +537,7 @@ p1
 
 getwd()
 
-jpeg("E:/Dr Washburn_C5a_PHTs/Tphts.jpeg", width = 15,height = 6,units = "in", res=300)
+jpeg("Figures/Tphts.jpeg", width = 15,height = 6,units = "in", res=300)
 p1
 #grid.arrange(p, p1, p2, p3, ncol=2)
 
@@ -582,7 +584,10 @@ df$Trait  <- factor(df$Trait, levels = c( "Asymptote",
                                           "PHT",
                                           "Temporal plant height"))
 
+
 head(df)
+write.csv(df, "data/Var_comps_manual_phenos_Tpht.csv")
+
 p2 <-  ggplot(data=df, aes(x= Trait, y=Percent)) +
   geom_col(mapping=aes(fill=grp), width= 0.9) +
   geom_point(mapping=aes(y = a +Heritability*b,shape="Repeatability"), fill="white",  color="black",size=4, alpha=1) +
@@ -663,6 +668,8 @@ Blup <- ggplot(dff, aes(x=Data, color=Tester)) +
   scale_x_continuous("") 
 Blup
 
+write.csv(dff, "data/blups_manual_phenos.csv")
+
 library(reshape2)
 
 cordata <- dcast(dff, Tester+ Hybrid~Trait, value.var = "Data")
@@ -677,7 +684,7 @@ grid.arrange(p2, Blup, p1, layout_matrix = rbind(c(1,2),
 
 
 
-jpeg("Figure_new1.jpeg", width =12,height = 8,units = "in", res=500)
+jpeg("Figures/Fig3_r.jpeg", width =12,height = 8,units = "in", res=500)
 
 grid.arrange(p2, Blup, p1, layout_matrix = rbind(c(1,1,1,2,2),
                                                  c(3)))
