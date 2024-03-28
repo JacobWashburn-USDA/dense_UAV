@@ -34,6 +34,7 @@ man_VCs = pd.read_csv("../data/Var_comps_manual_phenos_Tpht.csv", index_col=[0])
 man_VCs["grp"] = man_VCs["grp"].str.replace("Pedigree","Hybrid")
 man_VCs.rename(columns={"grp":"Variance Components", "Percent":"Explaned Percent Variation (%)",
                         "Heritability":"Repetability"}, inplace=True)
+man_calc_BLUPS = pd.read_csv("../data/blups_manual_phenos.csv", index_col=[0])
 
 
 # In[ ]:
@@ -104,10 +105,80 @@ plot_heights(temp_ht, flower_DAP=flower_GDD, x_col="Cum_GDD [C]", xaxis_title="C
             )
 
 
-# In[17]:
+# In[6]:
 
 
 #FIGURE 3B
+import plotly.figure_factory as ff
+
+#create each individual figures
+figs_dict = {}
+for trait in man_calc_BLUPS["Trait"].unique():
+    for_plot = []
+    group_labels = []
+    for tester in man_calc_BLUPS["Tester"].unique():
+        tmp = man_calc_BLUPS[(man_calc_BLUPS["Trait"]==trait) & (man_calc_BLUPS["Tester"]==tester)].copy()
+        for_plot.append(tmp.Data.tolist())
+        group_labels.append(tmp["Tester"].unique()[0])
+        
+    fig = ff.create_distplot(for_plot, group_labels, show_hist=False, show_rug=False)
+    fig["data"][0]['line']['dash'] = "dash"
+    fig["data"][1]['line']['dash'] = "dot"
+    fig["data"][2]['line']['dash'] = "dashdot"
+    fig.update_layout(title=tmp["Trait"].unique()[0])
+    figs_dict[trait] = fig
+
+#group figures
+fig = make_subplots(rows=3, cols=3, subplot_titles=list(figs_dict.keys()))
+row_col = [1,1]
+for key in figs_dict.keys():
+    #print(row_col)
+    #fix legend issues
+    if row_col != [1,1]:
+        for x in range(0,len(figs_dict[key].data)):
+            figs_dict[key].data[x].showlegend=False
+            
+    fig.add_traces(figs_dict[key].data, rows=[row_col[0]]*3, cols=[row_col[1]]*3)
+    #fig.add_trace(figs_dict[key].data[0], row=[row_col[0]], col=[row_col[1]])
+    if row_col[1] < 3:
+        row_col[1] = row_col[1]+1
+    else:
+        row_col[0] = row_col[0]+1
+        row_col[1] = 1
+fig.data[0].legendgrouptitle = dict(text="Tester")
+
+fig.update_layout(margin=dict(l=0, r=0, t=0, b=0))
+width = 500
+height = 550
+fig.update_layout(autosize=False, width=width,height=height)
+fig.update_layout(legend=dict(yanchor="top",
+                              y=1.1,
+                              xanchor="left",
+                              x=0,
+                              #entrywidthmode="fraction",
+                              #entrywidth=1,
+                              orientation="h",
+                              #tracegroupgap=0,
+                              #itemwidth=40,
+                              #font_size=5,
+                             ))
+
+fig.write_html("../Figures/Fig3B.html")
+fig.write_image("../Figures/Fig3B.svg")#, scale=scale)
+
+fig.show()
+
+
+# In[ ]:
+
+
+
+
+
+# In[7]:
+
+
+#FIGURE 3C
 #fix ordering for figure
 man_VCs["Trait_order"] = man_VCs["Trait"]
 man_VCs["Trait_order"] = man_VCs["Trait_order"].replace({
@@ -187,7 +258,7 @@ fig.update_xaxes(tickangle=15)
 fig.update_layout(autosize=False, width=800, height=400)
 
 fig.write_html("../Figures/Fig3C.html")
-fig.write_image("../Figures/FigC.svg")#, scale=scale)
+fig.write_image("../Figures/Fig3C.svg")#, scale=scale)
 
 fig.show()
 
