@@ -5,6 +5,7 @@
 
 
 import pandas as pd
+import numpy as np
 
 
 # In[2]:
@@ -106,6 +107,24 @@ mean_GDD = flowering[["Pollen_Cum_GDD ["+units+"]", "Silk_Cum_GDD ["+units+"]"]]
 std_GDD = flowering[["Pollen_Cum_GDD ["+units+"]", "Silk_Cum_GDD ["+units+"]"]].values.flatten().std()
 print("Mean Cum_GDD ["+units+"]: ", mean_GDD)
 print("Flowering Cum_GDD ["+units+"], Mean +/- Std: ", mean_GDD-std_GDD,",", mean_GDD+std_GDD)
+
+
+# In[6]:
+
+
+#np.quantile(flowering[["Pollen_DAP", "Silk_DAP"]].values.flatten(),0.25)
+
+
+# In[7]:
+
+
+#np.quantile(flowering[["Pollen_DAP", "Silk_DAP"]].values.flatten(),0.75)
+
+
+# In[8]:
+
+
+#np.quantile(flowering[["Pollen_DAP", "Silk_DAP"]].values.flatten(),0.5)
 
 
 # In[ ]:

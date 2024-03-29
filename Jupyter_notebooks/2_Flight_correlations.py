@@ -434,12 +434,6 @@ def line_plot_manual_vi_cor(man_uas_stats, man_phenos, vi, flower_DAP=flower_DAP
     return fig
 
 
-# In[ ]:
-
-
-
-
-
 # In[16]:
 
 
