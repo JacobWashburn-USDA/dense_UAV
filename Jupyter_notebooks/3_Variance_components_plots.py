@@ -10,11 +10,12 @@ import pandas as pd
 from plotly.subplots import make_subplots
 
 
-# In[20]:
+# In[2]:
 
 
 #bring in data
 data_dir = "../data/"
+triColors = ['#636efa','#EF553B','#00cc96']
 
 #bring in temporal plant hieght data (weilbull fit) from Variance Components r script
 temp_ht = pd.read_csv(data_dir+"Tpht_subset.csv", index_col=[0])
@@ -33,17 +34,24 @@ man_VCs = pd.read_csv("../data/Var_comps_manual_phenos_Tpht.csv", index_col=[0])
 #fix naming
 man_VCs["grp"] = man_VCs["grp"].str.replace("Pedigree","Hybrid")
 man_VCs.rename(columns={"grp":"Variance Components", "Percent":"Explaned Percent Variation (%)",
-                        "Heritability":"Repetability"}, inplace=True)
+                        "Heritability":"Repeatability"}, inplace=True)
 man_calc_BLUPS = pd.read_csv("../data/blups_manual_phenos.csv", index_col=[0])
 
 vcVARI = pd.read_csv("../data/VARI.varcomp.csv")
+vcVARI.rename(columns={"Var. Component":"Variance Components", "Percent":"Explaned Percent Variation (%)",
+                        "Heritability":"Repeatability"}, inplace=True)
+vcVARI["Variance Components"] = vcVARI["Variance Components"].str.replace("Pedigree","Hybrid")
+vcVARI["Flight"] = vcVARI["Flight"].str.replace("Multiple","All Flights")
+
 vcRmB = pd.read_csv("../data/RmB.varcomp.csv")
+vcRmB.rename(columns={"Var. Component":"Variance Components", "Percent":"Explaned Percent Variation (%)",
+                        "Heritability":"Repeatability"}, inplace=True)
+vcRmB["Variance Components"] = vcRmB["Variance Components"].str.replace("Pedigree","Hybrid")
+vcRmB["Flight"] = vcRmB["Flight"].str.replace("Multiple","All Flights")
 
-
-# In[3]:
-
-
-triColors = ['#636efa','#EF553B','#00cc96']
+vcRmB["VI"] = "RmB"
+vcVARI["VI"] = "VARI"
+vc_VI = pd.concat([vcRmB, vcVARI])
 
 
 # In[ ]:
@@ -52,7 +60,7 @@ triColors = ['#636efa','#EF553B','#00cc96']
 
 
 
-# In[16]:
+# In[3]:
 
 
 #plot heights by date and value
@@ -100,7 +108,7 @@ def plot_heights(df_stacked, flower_DAP=flower_DAP, x_col="DAP", value_col="Heig
     return fig
 
 
-# In[17]:
+# In[4]:
 
 
 #FIGURE 3A
@@ -110,7 +118,7 @@ fig3A = plot_heights(temp_ht, x_col="DAP",
                   )
 
 
-# In[18]:
+# In[5]:
 
 
 #SUP FIG 7
@@ -120,7 +128,7 @@ fig = plot_heights(temp_ht, flower_DAP=flower_GDD, x_col="Cum_GDD [C]", xaxis_ti
             )
 
 
-# In[14]:
+# In[6]:
 
 
 #FIGURE 3B
@@ -196,7 +204,7 @@ fig3B = dist_plots()
 
 
 
-# In[15]:
+# In[54]:
 
 
 #FIGURE 3C
@@ -204,18 +212,9 @@ fig3B = dist_plots()
 def vc_plot(man_VCs):
     #fix ordering for figure
     man_VCs["Trait_order"] = man_VCs["Trait"]
-    man_VCs["Trait_order"] = man_VCs["Trait_order"].replace({
-        'Asymptote':1,
-        'Growth rate':2, 
-        'Inflection point':3,
-        'YLD':4,
-        'DTA':5,
-        'DTS':6,
-        'ASI':7,
-        'PHT':8, 
-        'EHT':9,
-        'ASI':10,
-        'Temporal plant height':11})
+    man_VCs["Trait_order"] = man_VCs["Trait_order"].replace({'Asymptote':1,'Growth rate':2,'Inflection point':3,'YLD':4,
+                                                             'DTA':5,'DTS':6,'ASI':7,'PHT':8,'EHT':9,'ASI':10,
+                                                             'Temporal plant height':11})
     man_VCs["VC_order"] = man_VCs["Variance Components"]
     man_VCs["VC_order"] = man_VCs["VC_order"].replace({'Hybrid':1,
                                                        'Row':5,
@@ -232,7 +231,7 @@ def vc_plot(man_VCs):
     #CV_R2_Rep.drop_duplicates(inplace=True)
     #CV_R2_Rep = CV_R2_Rep.stack().reset_index().rename(columns={"level_1":"Metric",0:"Value"})
     #CV_R2_Rep["Value"] = CV_R2_Rep["Value"]*100
-    CV_R2_Rep = man_VCs[["Trait","Repetability","Rsquared","CV"]].copy()
+    CV_R2_Rep = man_VCs[["Trait","Repeatability","Rsquared","CV"]].copy()
     CV_R2_Rep.drop_duplicates(inplace=True)
 
     #create figure
@@ -249,20 +248,20 @@ def vc_plot(man_VCs):
 
     fig = make_subplots(specs=[[{"secondary_y": True}]])
     cv = go.Scatter(x=CV_R2_Rep.Trait, y=CV_R2_Rep.CV, name="CV", mode='markers',
-                    marker=dict(size=12, color = 'white', symbol='square',
+                    marker=dict(size=9, color = 'white', symbol='square',
                                 line=dict(width=1, color='black')
                                ),
                     legendgroup="Metrics",
                     legendgrouptitle_text="Metrics",
                    )
-    rep = go.Scatter(x=CV_R2_Rep.Trait, y=CV_R2_Rep.Repetability, name="Repetability", mode='markers',
-                    marker=dict(size=12, color = 'white', symbol='triangle-down',
+    rep = go.Scatter(x=CV_R2_Rep.Trait, y=CV_R2_Rep.Repeatability, name="Repeatability", mode='markers',
+                    marker=dict(size=11, color = 'white', symbol='triangle-down',
                                 line=dict(width=1, color='black')
                                ),
                     legendgroup="Metrics",
                    )
     r2 = go.Scatter(x=CV_R2_Rep.Trait, y=CV_R2_Rep.Rsquared, name="Rsquared", mode='markers',
-                    marker=dict(size=12, color = 'white', symbol='triangle-up',
+                    marker=dict(size=11, color = 'white', symbol='triangle-up',
                                 line=dict(width=1, color='black')
                                ),
                     legendgroup="Metrics",
@@ -285,22 +284,128 @@ def vc_plot(man_VCs):
     fig.update_layout(margin=dict(l=0, r=1, t=30, b=1))
     fig.update_xaxes(tickangle=15)
     fig.update_layout(autosize=False, width=800, height=450)
-
+    #fig.update_layout(xaxis=dict(showgrid=False), yaxis=dict(showgrid=False))
+    fig.update_yaxes(range=(0,100), secondary_y=False)
+    fig.update_yaxes(range=(0,1), secondary_y=True)
+    
     fig.write_html("../Figures/Fig3C.html")
     fig.write_image("../Figures/Fig3C.svg")#, scale=scale)
 
     fig.show()
+    return fig
+
 fig3C = vc_plot(man_VCs)
 
 
-# In[21]:
+# In[ ]:
+
+
+
+
+
+# In[89]:
 
 
 #FIGURE 4
-vcRmB
+def vc_plot_sng(vcDF, cv_order, title=""):
+    #set vc order
+    vcDF = vcDF.copy()
+    vcDF["VC_order"] = vcDF["Variance Components"]
+    vcDF["VC_order"] = vcDF["VC_order"].replace(vc_order)
+    vcDF["Flight_order"] = vcDF["Flight"]
+    vcDF["Flight_order"] = vcDF["Flight_order"].replace("All Flights",999).astype(int)
+    
+    vcDF = vcDF.sort_values(["VC_order","Flight_order"], ascending=[False,True])
+    
+    
+    #setup metrics df
+    #mtrcsDF = vcDF[["Flight","Repeatability","Rsquared"]].copy()
+    mtrcsDF = vcDF[["Flight","Repeatability","Rsquared"]].copy()
+    mtrcsDF.drop_duplicates(inplace=True)
+    
+    #create figure
+    fig1 = px.bar(vcDF, x="Flight", y="Explaned Percent Variation (%)",
+                  color="Variance Components",# facet_row="VI",
+                  #pattern_shape="Variance Components",
+                  color_discrete_sequence=px.colors.qualitative.Dark2,
+                  #color_discrete_sequence=["#E69F00", "#56B4E9", "#009E73",
+                  #                         "#F0E442", "#0072B2", "#D55E00", "#CC79A7"],
+                 )
+    #fig1.update_layout(legend_traceorder="reversed")
+    #fig1.show()
+    #return fig1
+    
+    
+    fig = make_subplots(specs=[[{"secondary_y": True}]])
+    rep = go.Scatter(x=mtrcsDF.Flight, y=mtrcsDF.Repeatability, name="Repeatability", mode='markers',
+                    marker=dict(size=12, color = 'white', symbol='triangle-down',
+                                line=dict(width=1, color='black')
+                               ),
+                    #legendgroup="Metrics",
+                    #legendgrouptitle_text="Metrics",
+                   )
+    #r2 = go.Scatter(x=mtrcsDF.Flight, y=mtrcsDF.Rsquared, name="Rsquared", mode='markers',
+    #                marker=dict(size=12, color = 'white', symbol='triangle-up',
+    #                            line=dict(width=1, color='black')
+    #                           ),
+                    #legendgroup="Metrics",
+                    #legendgrouptitle_text="Metrics",
+    #               )
+    
+    #fig.add_traces([rep, r2], secondary_ys=[True,True])
+    fig.add_traces([rep], secondary_ys=[True])
+    fig.add_traces(fig1.data)
+    fig.update_layout(barmode='stack')
+    
+    #seperate legends into two groups
+    #for trace_num in range(0, len(fig.data)):
+    #    if fig.data[trace_num].name in vcDF["Variance Components"].unique():
+    #        fig.data[trace_num].legendgroup = "VC"
+    #        fig.data[trace_num].legendgrouptitle = dict(text="Variance Components")
+    
+    fig.update_yaxes(title_text="Explaned Percent Variation (%)", secondary_y=False)
+    fig.update_yaxes(title_text="Repeatability", secondary_y=True)
+    fig.update_layout(margin=dict(l=0, r=0, t=20, b=0))
+    #fig.update_xaxes(tickangle=15)
+    fig.update_layout(legend=dict(#yanchor="top",
+                                  #y=1.12,
+                                  #xanchor="left",
+                                  #x=0,
+                                  #entrywidthmode="fraction",
+                                  #entrywidth=1,
+                                  orientation="h",
+                                  #tracegroupgap=0,
+                                  #itemwidth=40,
+                                  #font_size=5,
+                                 ))
+    fig.update_layout(title=dict(
+                      text=title,
+                      x=0.5,
+                      y=0.99,
+                      xanchor='center',
+                      yanchor='top',)
+                     )
+    fig.update_yaxes(range=(0,100), secondary_y=False)
+    fig.update_yaxes(range=(0,1), secondary_y=True)
+    fig.update_xaxes(range=(-1,len(mtrcsDF.Flight)))
+    fig.update_xaxes(title="Days After Planting (DAP)")
+    #fig1.add_scatter(mtrcsDF, x="Flight", y="Repeatability")#, facet_row="VI")
+    fig.update_layout(legend_traceorder="reversed")
+    fig.update_layout(autosize=False, width=1000, height=450)
+    
+    
+    
+    fig.show()
+    return fig
+
+vc_order = {'Hybrid':1,'Row':5,'Range':4,'Rep':6,'Residual':7,'Hybrid:Flight':3,'Flight':2}
+
+#vcRmB_fig = vc_plot_sng(vc_VI, vc_order)
+vcRmB_fig = vc_plot_sng(vcRmB, vc_order, title="RmB")
+vcVARI_fig = vc_plot_sng(vcVARI, vc_order, title="VARI")
 
 
-# In[ ]:
+# In[25]:
 
 
 
