@@ -204,7 +204,7 @@ fig3B = dist_plots()
 
 
 
-# In[54]:
+# In[7]:
 
 
 #FIGURE 3C
@@ -303,11 +303,11 @@ fig3C = vc_plot(man_VCs)
 
 
 
-# In[89]:
+# In[8]:
 
 
 #FIGURE 4
-def vc_plot_sng(vcDF, cv_order, title=""):
+def vc_plot_sng(vcDF, cv_order, title="", save_html_path="", save_svg_path="", width=1000, height=450):
     #set vc order
     vcDF = vcDF.copy()
     vcDF["VC_order"] = vcDF["Variance Components"]
@@ -319,7 +319,6 @@ def vc_plot_sng(vcDF, cv_order, title=""):
     
     
     #setup metrics df
-    #mtrcsDF = vcDF[["Flight","Repeatability","Rsquared"]].copy()
     mtrcsDF = vcDF[["Flight","Repeatability","Rsquared"]].copy()
     mtrcsDF.drop_duplicates(inplace=True)
     
@@ -330,54 +329,22 @@ def vc_plot_sng(vcDF, cv_order, title=""):
                   color_discrete_sequence=px.colors.qualitative.Dark2,
                   #color_discrete_sequence=["#E69F00", "#56B4E9", "#009E73",
                   #                         "#F0E442", "#0072B2", "#D55E00", "#CC79A7"],
-                 )
-    #fig1.update_layout(legend_traceorder="reversed")
-    #fig1.show()
-    #return fig1
-    
+                 )    
     
     fig = make_subplots(specs=[[{"secondary_y": True}]])
     rep = go.Scatter(x=mtrcsDF.Flight, y=mtrcsDF.Repeatability, name="Repeatability", mode='markers',
                     marker=dict(size=12, color = 'white', symbol='triangle-down',
                                 line=dict(width=1, color='black')
-                               ),
-                    #legendgroup="Metrics",
-                    #legendgrouptitle_text="Metrics",
-                   )
-    #r2 = go.Scatter(x=mtrcsDF.Flight, y=mtrcsDF.Rsquared, name="Rsquared", mode='markers',
-    #                marker=dict(size=12, color = 'white', symbol='triangle-up',
-    #                            line=dict(width=1, color='black')
-    #                           ),
-                    #legendgroup="Metrics",
-                    #legendgrouptitle_text="Metrics",
-    #               )
+                               ))
     
-    #fig.add_traces([rep, r2], secondary_ys=[True,True])
     fig.add_traces([rep], secondary_ys=[True])
     fig.add_traces(fig1.data)
     fig.update_layout(barmode='stack')
-    
-    #seperate legends into two groups
-    #for trace_num in range(0, len(fig.data)):
-    #    if fig.data[trace_num].name in vcDF["Variance Components"].unique():
-    #        fig.data[trace_num].legendgroup = "VC"
-    #        fig.data[trace_num].legendgrouptitle = dict(text="Variance Components")
-    
     fig.update_yaxes(title_text="Explaned Percent Variation (%)", secondary_y=False)
     fig.update_yaxes(title_text="Repeatability", secondary_y=True)
     fig.update_layout(margin=dict(l=0, r=0, t=20, b=0))
     #fig.update_xaxes(tickangle=15)
-    fig.update_layout(legend=dict(#yanchor="top",
-                                  #y=1.12,
-                                  #xanchor="left",
-                                  #x=0,
-                                  #entrywidthmode="fraction",
-                                  #entrywidth=1,
-                                  orientation="h",
-                                  #tracegroupgap=0,
-                                  #itemwidth=40,
-                                  #font_size=5,
-                                 ))
+    fig.update_layout(legend=dict(orientation="h"))
     fig.update_layout(title=dict(
                       text=title,
                       x=0.5,
@@ -389,11 +356,26 @@ def vc_plot_sng(vcDF, cv_order, title=""):
     fig.update_yaxes(range=(0,1), secondary_y=True)
     fig.update_xaxes(range=(-1,len(mtrcsDF.Flight)))
     fig.update_xaxes(title="Days After Planting (DAP)")
-    #fig1.add_scatter(mtrcsDF, x="Flight", y="Repeatability")#, facet_row="VI")
     fig.update_layout(legend_traceorder="reversed")
-    fig.update_layout(autosize=False, width=1000, height=450)
+    '''
+    #add flowering time box
+    min_range = 0
+    max_range= 100
+    #fig.update_yaxes(range=[min_range, max_range])
+    fig.add_shape(type="rect", x0=flower_DAP[0], y0=min_range, x1=flower_DAP[1], y1=max_range,
+                  line=dict(
+                      color="black",
+                      width=3,
+                  ), fillcolor="black", opacity=0.25)
+    '''
+    fig.update_layout(autosize=False, width=width, height=height)
     
+    if save_html_path != "":
+        fig.write_html(save_html_path)
     
+    if save_svg_path != "":
+        fig.write_image(save_svg_path)#, scale=scale)
+
     
     fig.show()
     return fig
@@ -401,11 +383,15 @@ def vc_plot_sng(vcDF, cv_order, title=""):
 vc_order = {'Hybrid':1,'Row':5,'Range':4,'Rep':6,'Residual':7,'Hybrid:Flight':3,'Flight':2}
 
 #vcRmB_fig = vc_plot_sng(vc_VI, vc_order)
-vcRmB_fig = vc_plot_sng(vcRmB, vc_order, title="RmB")
-vcVARI_fig = vc_plot_sng(vcVARI, vc_order, title="VARI")
+vcRmB_fig = vc_plot_sng(vcRmB, vc_order, title="RmB",
+                        save_html_path="../Figures/Fig4A.html",
+                        save_svg_path="../Figures/Fig4A.svg")
+vcVARI_fig = vc_plot_sng(vcVARI, vc_order, title="VARI",
+                         save_html_path="../Figures/Fig4B.html",
+                        save_svg_path="../Figures/Fig4B.svg")
 
 
-# In[25]:
+# In[ ]:
 
 
 
