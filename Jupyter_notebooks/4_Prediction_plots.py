@@ -19,8 +19,8 @@ from statsmodels.stats.multicomp import pairwise_tukeyhsd
 
 #bring in data
 data_dir = "../data/"
-#sng_long_pred = pd.read_csv("../data/Prediction ability.csv")
-sng_long_pred = pd.read_csv("../data/Prediction ability no hieght.csv")
+sng_long_pred = pd.read_csv("../data/Prediction ability.csv")
+sng_long_pred_noPHT = pd.read_csv("../data/Prediction ability no hieght.csv")
 
 temp_VIs = pd.read_csv(data_dir+"Temporal_VIs.csv", index_col=[0])
 
@@ -59,13 +59,10 @@ def add_DAP(temp_VIs, sng_long_pred):
         else:
             label += daps.loc[ind-1, "Model"] + " + " + daps.loc[ind,"DAP"] + " DAP"
         labels.append(label)
+        #print(label)
     daps["Label"] = labels
     #long_pred = long_pred.merge(daps[["Model","Label"]], on="Model")
     sng_long_pred = sng_long_pred.merge(daps[["Model","Label"]], on="Model")
-
-    #fix labels
-    tmp = sng_long_pred.loc[sng_long_pred["Label"]!="M1: Genomic", "Label"].copy()
-    sng_long_pred.loc[sng_long_pred["Label"]!="M1: Genomic", "Label"] = tmp.str.replace(" M\d+ \+", "", regex=True)#.unique()
     return sng_long_pred
 
 
@@ -112,99 +109,104 @@ def run_tukey(sng_long_pred):
 
 sng_long_pred = process_labels(sng_long_pred)
 sng_long_pred = add_DAP(temp_VIs, sng_long_pred)
-sim_CIs = run_tukey(sng_long_pred)
+sim_CIs = run_tukey(sng_long_pred) #run anova
 
 
-# In[9]:
-
-
-#FIGURE 6
-fig = px.scatter(sim_CIs, x="Label", y="Mean", error_y="Halfwidth")
-fig.update_layout(yaxis_title="Prediction Ability (pearson r)", xaxis_title="")
-fig.update_layout(margin=dict(l=1, r=1, t=1, b=1))
-
-#fig2 = px.line(sim_CIs, x="Label", y="Mean")
-#fig2.update_traces(line_color='black')#, line_width=5)
-#fig.add_traces(list(fig2.select_traces()))
-
-
-width = 900
-height = 750
-fig.update_layout(autosize=False, width=width,height=height)
-fig.write_html("../Figures/Fig6.html")
-fig.write_image("../Figures/Fig6.svg")
-
-fig.show()
-#tukey_res.plot_simultaneous()
-
-
-# In[ ]:
-
-
-
-
-
-# In[16]:
+# In[8]:
 
 
 #FIGURE 5
 for_fig = sng_long_pred[sng_long_pred["CV"]=="CV1"].copy()
 for_fig = for_fig[for_fig["Model"].isin(["M1","M44","M17"])]
-for_fig.pivot_table(index=["Model"])
-
-
-# In[15]:
-
-
+for_fig["Model"] = for_fig["Model"].replace({"M1":"Genomic", "M44":"Phenomic:<br>All Season", "M17":"Phenomic:<br>Pre-Flowering"})
+for_fig = for_fig.sort_values("Model")
 fig = px.box(for_fig, x="Model", y="cor", color="Model")
+fig.update_layout(yaxis_title="Prediction Ability (pearson r)", xaxis_title="")
+fig.update_layout(showlegend=False)
+
+width = 500
+height = 500
+fig.update_layout(autosize=False, width=width,height=height)
+fig.write_html("../Figures/Fig5.html")
+fig.write_image("../Figures/Fig5.svg")
+
 fig.show()
+
+#ALT FIGURE 5
+#mean = for_fig.pivot_table(index=["Model"]).reset_index()
+#std = for_fig.pivot_table(index=["Model"], aggfunc="std").reset_index()
+#fig = px.bar(mean, x="Model", y="cor", color="Model",
+#             text=mean["cor"].round(2).to_list(),
+#             error_y= std["cor"].tolist())
+#fig.show()
+
+
+# In[ ]:
+
+
+
+
+
+# In[9]:
+
+
+
+def tukey_simultanious_fig(sim_CIs, save_html_path="", save_svg_path="", width=900, height=750):
+    fig = px.scatter(sim_CIs, x="Label", y="Mean", error_y="Halfwidth")
+    fig.update_layout(yaxis_title="Prediction Ability (pearson r)", xaxis_title="")
+    fig.update_layout(margin=dict(l=1, r=1, t=1, b=1))
+
+    #add hline 1
+    graph_line = sim_CIs[sim_CIs["Model"]=="M44"].copy().iloc[0]
+    graph_line = graph_line["Mean"]-graph_line["Halfwidth"]
+    fig.add_hline(y=graph_line, line_dash="dot", line_width=1)
+
+    #add hline 2
+    graph_line = sim_CIs[sim_CIs["Model"]=="M2"].copy().iloc[0]
+    graph_line = graph_line["Mean"]+graph_line["Halfwidth"]
+    fig.add_hline(y=graph_line, line_dash="dot", line_width=1)
+
+    #add flowering time box
+    fig.add_vrect(x0=15.5, x1=18.5)
+    fig.update_xaxes(range=(-1,44))
+
+    fig.update_layout(autosize=False, width=width,height=height)
+    
+    if save_html_path != "":
+        fig.write_html(save_html_path)
+    
+    if save_svg_path != "":
+        fig.write_image(save_svg_path)#, scale=scale)
+
+    fig.show()
+
+
+# In[10]:
+
+
+#FIGURE 6
+tukey_simultanious_fig(sim_CIs,
+                       save_html_path="../Figures/Fig6.html",
+                       save_svg_path="../Figures/Fig6_noMod.svg"
+                      )
 
 
 # In[11]:
 
 
-cv_cors
+sng_long_pred_noPHT = process_labels(sng_long_pred_noPHT)
+sng_long_pred_noPHT = add_DAP(temp_VIs, sng_long_pred_noPHT)
+sim_CIs_noPHT = run_tukey(sng_long_pred_noPHT) #run anova
 
 
-# In[ ]:
+# In[12]:
 
 
-
-
-
-# In[ ]:
-
-
-
-
-
-# In[ ]:
-
-
-
-
-
-# In[2]:
-
-
-
-long_pred = pd.read_csv(data_dir+"Longitudinal Prediction ability no hieght.csv", index_col=[0])
-
-#add M number as int for sorting
-long_pred["M_num"] = long_pred["Model"].str.split("M",expand=True)[1].astype(int)
-#add genomic verses phenomic
-long_pred["Type"] = ""
-long_pred.loc[long_pred["Model"]=="M1", "Type"] = "Genomic"
-long_pred.loc[long_pred["Model"]!="M1", "Type"] = "Phenomic"
-
-sng_long_pred = pd.read_csv(data_dir+"single_flight_Prediction ability.csv", index_col=[0])
-
-#add M number as int for sorting
-sng_long_pred["M_num"] = sng_long_pred["Model"].str.split("M",expand=True)[1].astype(int)
-#add genomic verses phenomic
-sng_long_pred["Type"] = ""
-sng_long_pred.loc[sng_long_pred["Model"]=="M1", "Type"] = "Genomic"
-sng_long_pred.loc[sng_long_pred["Model"]!="M1", "Type"] = "Phenomic"
+#SUP FIGURE 8
+tukey_simultanious_fig(sim_CIs_noPHT,
+                       save_html_path="../Figures/SupFig8.html",
+                       save_svg_path="../Figures/SupFig8.svg"
+                      )
 
 
 # In[ ]:
