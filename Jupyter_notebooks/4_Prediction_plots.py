@@ -112,13 +112,15 @@ sng_long_pred = add_DAP(temp_VIs, sng_long_pred)
 sim_CIs = run_tukey(sng_long_pred) #run anova
 
 
-# In[8]:
+# In[12]:
 
 
 #FIGURE 5
 for_fig = sng_long_pred[sng_long_pred["CV"]=="CV1"].copy()
-for_fig = for_fig[for_fig["Model"].isin(["M1","M44","M17"])]
-for_fig["Model"] = for_fig["Model"].replace({"M1":"Genomic", "M44":"Phenomic:<br>All Season", "M17":"Phenomic:<br>Pre-Flowering"})
+for_fig = for_fig[for_fig["Model"].isin(["M1","M44","M15"])]
+for_fig["Model"] = for_fig["Model"].replace({"M1":"Genomic<br>(M1)",
+                                             "M44":"Phenomic:<br>All Season<br>(M2)", 
+                                             "M15":"Phenomic:<br>Pre-Flowering<br>(M3)"})
 for_fig = for_fig.sort_values("Model")
 fig = px.box(for_fig, x="Model", y="cor", color="Model")
 fig.update_layout(yaxis_title="Prediction Ability (pearson r)", xaxis_title="")
@@ -129,6 +131,7 @@ height = 500
 fig.update_layout(autosize=False, width=width,height=height)
 fig.write_html("../Figures/Fig5.html")
 fig.write_image("../Figures/Fig5.svg")
+fig.write_image("../Figures/Fig5.png")
 
 fig.show()
 
@@ -147,7 +150,7 @@ fig.show()
 
 
 
-# In[9]:
+# In[13]:
 
 
 
@@ -181,17 +184,17 @@ def tukey_simultanious_fig(sim_CIs, save_html_path="", save_svg_path="", width=9
     fig.show()
 
 
-# In[10]:
+# In[14]:
 
 
 #FIGURE 6
 tukey_simultanious_fig(sim_CIs,
-                       save_html_path="../Figures/Fig6.html",
-                       save_svg_path="../Figures/Fig6_noMod.svg"
+                       #save_html_path="../Figures/Fig6.html",
+                       #save_svg_path="../Figures/Fig6_noMod.svg"
                       )
 
 
-# In[11]:
+# In[15]:
 
 
 sng_long_pred_noPHT = process_labels(sng_long_pred_noPHT)
@@ -199,13 +202,13 @@ sng_long_pred_noPHT = add_DAP(temp_VIs, sng_long_pred_noPHT)
 sim_CIs_noPHT = run_tukey(sng_long_pred_noPHT) #run anova
 
 
-# In[12]:
+# In[16]:
 
 
 #SUP FIGURE 8
 tukey_simultanious_fig(sim_CIs_noPHT,
-                       save_html_path="../Figures/SupFig8.html",
-                       save_svg_path="../Figures/SupFig8.svg"
+                       #save_html_path="../Figures/SupFig8.html",
+                       #save_svg_path="../Figures/SupFig8.svg"
                       )
 
 
