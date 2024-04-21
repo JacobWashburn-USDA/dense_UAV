@@ -54,13 +54,23 @@ vcVARI["VI"] = "VARI"
 vc_VI = pd.concat([vcRmB, vcVARI])
 
 
+# In[3]:
+
+
+#VarComps all VIs
+vc_all_VIs = pd.read_csv("../data/varcomps_all_VIs.csv", index_col=[0])
+vc_all_VIs.rename(columns={"grp":"Variance Components", "Percent":"Explaned Percent Variation (%)"}, inplace=True)
+vc_all_VIs["Variance Components"] = vc_all_VIs["Variance Components"].str.replace("Pedigree","Hybrid")
+vc_all_VIs["Explaned Percent Variation (%)"] = vc_all_VIs["Explaned Percent Variation (%)"]*100
+
+
 # In[ ]:
 
 
 
 
 
-# In[3]:
+# In[7]:
 
 
 #plot heights by date and value
@@ -303,27 +313,30 @@ fig3C = vc_plot(man_VCs)
 
 
 
-# In[8]:
+# In[9]:
 
 
 #FIGURE 4
-def vc_plot_sng(vcDF, cv_order, title="", save_html_path="", save_svg_path="", width=1000, height=450):
+def vc_plot_sng(vcDF, cv_order, x_variable="Flight", title="", save_html_path="", save_svg_path="", width=1000, height=450):
     #set vc order
     vcDF = vcDF.copy()
     vcDF["VC_order"] = vcDF["Variance Components"]
     vcDF["VC_order"] = vcDF["VC_order"].replace(vc_order)
-    vcDF["Flight_order"] = vcDF["Flight"]
-    vcDF["Flight_order"] = vcDF["Flight_order"].replace("All Flights",999).astype(int)
+    vcDF[x_variable+"_order"] = vcDF[x_variable]
+    try:
+        vcDF[x_variable+"_order"] = vcDF[x_variable+"_order"].replace("All Flights",999).astype(int)
+    except:
+        print("x variable is categorical")
     
-    vcDF = vcDF.sort_values(["VC_order","Flight_order"], ascending=[False,True])
+    vcDF = vcDF.sort_values(["VC_order",x_variable+"_order"], ascending=[False,True])
     
     
     #setup metrics df
-    mtrcsDF = vcDF[["Flight","Repeatability","Rsquared"]].copy()
+    mtrcsDF = vcDF[[x_variable,"Repeatability","Rsquared"]].copy()
     mtrcsDF.drop_duplicates(inplace=True)
     
     #create figure
-    fig1 = px.bar(vcDF, x="Flight", y="Explaned Percent Variation (%)",
+    fig1 = px.bar(vcDF, x=x_variable, y="Explaned Percent Variation (%)",
                   color="Variance Components",# facet_row="VI",
                   #pattern_shape="Variance Components",
                   color_discrete_sequence=px.colors.qualitative.Dark2,
@@ -332,7 +345,7 @@ def vc_plot_sng(vcDF, cv_order, title="", save_html_path="", save_svg_path="", w
                  )    
     
     fig = make_subplots(specs=[[{"secondary_y": True}]])
-    rep = go.Scatter(x=mtrcsDF.Flight, y=mtrcsDF.Repeatability, name="Repeatability", mode='markers',
+    rep = go.Scatter(x=mtrcsDF[x_variable], y=mtrcsDF.Repeatability, name="Repeatability", mode='markers',
                     marker=dict(size=12, color = 'white', symbol='triangle-down',
                                 line=dict(width=1, color='black')
                                ))
@@ -354,7 +367,7 @@ def vc_plot_sng(vcDF, cv_order, title="", save_html_path="", save_svg_path="", w
                      )
     fig.update_yaxes(range=(0,100), secondary_y=False)
     fig.update_yaxes(range=(0,1), secondary_y=True)
-    fig.update_xaxes(range=(-1,len(mtrcsDF.Flight)))
+    fig.update_xaxes(range=(-1,len(mtrcsDF[x_variable])))
     fig.update_xaxes(title="Days After Planting (DAP)")
     fig.update_layout(legend_traceorder="reversed")
     '''
@@ -384,17 +397,29 @@ vc_order = {'Hybrid':1,'Row':5,'Range':4,'Rep':6,'Residual':7,'Hybrid:Flight':3,
 
 #vcRmB_fig = vc_plot_sng(vc_VI, vc_order)
 vcRmB_fig = vc_plot_sng(vcRmB, vc_order, title="RmB",
-                        save_html_path="../Figures/Fig4A.html",
-                        save_svg_path="../Figures/Fig4A.svg")
+                        #save_html_path="../Figures/Fig4A.html",
+                        #save_svg_path="../Figures/Fig4A.svg"
+                       )
 vcVARI_fig = vc_plot_sng(vcVARI, vc_order, title="VARI",
-                         save_html_path="../Figures/Fig4B.html",
-                        save_svg_path="../Figures/Fig4B.svg")
+                         #save_html_path="../Figures/Fig4B.html",
+                         #save_svg_path="../Figures/Fig4B.svg"
+                        )
 
 
-# In[ ]:
+# In[10]:
 
 
+vc_all_VIs
 
+
+# In[11]:
+
+
+#Sup Fig S8 
+vc_all_fig = vc_plot_sng(vc_all_VIs, vc_order, x_variable="Trait",
+                         save_html_path="../Figures/SupFig8.html",
+                         save_svg_path="../Figures/SupFing8.svg"
+                        )
 
 
 # In[ ]:

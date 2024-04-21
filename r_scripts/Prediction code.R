@@ -1,6 +1,6 @@
 
 #setwd("C:/Users/jdwr47/Documents/For_New_Comp/dense_UAV") # set to the root repository directory ("dense_UAV")
-setwd("D:\\Washburn\\Prediction new\\Pred ability")
+setwd("C:/Users/jdwr47/Documents/For_New_Comp/dense_UAV/Data")
 
 df <- read.csv("Phenomic_scaled_centered.csv", row.names = 1)
 df[1:5,1:5]
@@ -211,10 +211,10 @@ write.csv(P1,"P1.csv")
 library(dplyr)
 library(BGLR)
 
-AM <-as.matrix(read.csv("data/AM.csv",row.names = 1))
+AM <-as.matrix(read.csv("AM.csv",row.names = 1))
 AM[1:10,1:10]
 
-DM <-as.matrix(read.csv("data/DM.csv",row.names = 1))
+DM <-as.matrix(read.csv("DM.csv",row.names = 1))
 DM[1:10,1:10]
 
 P1 <-as.matrix(read.csv("P1.csv",row.names = 1))
@@ -265,7 +265,7 @@ P43 <-as.matrix(read.csv("P43.csv",row.names = 1))
 
 #####
 
-Pheno <- read.csv("data/Pheno_blues.csv")
+Pheno <- read.csv("Pheno_blues.csv")
 head(Pheno)
 
 
