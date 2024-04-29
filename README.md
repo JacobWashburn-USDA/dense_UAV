@@ -4,8 +4,10 @@ If you use this data or scripts please cite: <MANUSCRIPT CITATION>
 
 ### Interactive Figures ###
 
-Figure 1. 
-* Figure 1. RmB vegetative index correlations and autocorrelations between: [A) flight dates throughout the season](https://htmlpreview.github.io/?https://github.com/JacobWashburn-USDA/dense_UAV/blob/main/Figures/Fig1A.html), and [B) auto-correlations for all pairs of flights and every possible distance between flights across the season in days.](https://htmlpreview.github.io/?https://github.com/JacobWashburn-USDA/dense_UAV/blob/main/Figures/Fig1B.html)
+* Figure 1. RmB vegetative index correlations and autocorrelations between: [A)](https://htmlpreview.github.io/?https://github.com/JacobWashburn-USDA/dense_UAV/blob/main/Figures/Fig1A.html) flight dates throughout the season, and [B)](https://htmlpreview.github.io/?https://github.com/JacobWashburn-USDA/dense_UAV/blob/main/Figures/Fig1B.html) auto-correlations for all pairs of flights and every possible distance between flights across the season in days.
+* [Figure 2.](https://htmlpreview.github.io/?https://github.com/JacobWashburn-USDA/dense_UAV/blob/main/Figures/Fig2.html) Correlations between standard manual phenotypes taken for each plot at a single time point in the season and the vegetative index GmR from flights throughout the season. The few days before and after the average flowering time are highlighted with a gray box.
+
+(https://htmlpreview.github.io/?https://github.com/JacobWashburn-USDA/dense_UAV/blob/main/Figures/Fig1A.html)
 
 ### Scripts for running analysis ###
 
