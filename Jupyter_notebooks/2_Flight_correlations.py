@@ -138,7 +138,7 @@ all_VIs_stats.to_csv("../data/all_VIs_stats.csv")
 #Figure ploting functions
 
 def correlation_heatmap(all_phenos, vi, x_y_label = "Days After Planting", value_col = "Pearson r", title="",
-                        save_html_path="", save_svg_path="", fig_width=800, fig_height=400):
+                        save_html_path="", save_svg_path="",save_pdf_path="", fig_width=800, fig_height=400):
     for_corr = all_phenos[vi].copy()
     for_corr = for_corr.corr()
     
@@ -153,13 +153,18 @@ def correlation_heatmap(all_phenos, vi, x_y_label = "Days After Planting", value
     if save_svg_path != "":
         fig.update_layout(autosize=False, width=fig_width, height=fig_height)
         fig.write_image(save_svg_path)#, scale=scale)
+    
+    if save_pdf_path != "":
+        fig.update_layout(autosize=False, width=fig_width, height=fig_height)
+        fig.write_image(save_pdf_path)#, scale=scale)
+    
     fig.show()
     
     return for_corr
 
 def box_plot_w_trendline(all_VIs_stacked, vi, x_col="Distance [DAP]", value_col = "Pearson r", title="",
                          x_title = "Days Between Flights", distance_cutoff = 120, save_html_path="", round_base=0,
-                         save_svg_path="", fig_width=800, fig_height=400):
+                         save_svg_path="",save_pdf_path="", fig_width=800, fig_height=400):
     for_box_plot = all_VIs_stacked[all_VIs_stacked["Vegetation Index"]==vi].copy()
     for_box_plot = for_box_plot[for_box_plot[x_col] < distance_cutoff]
     
@@ -188,6 +193,11 @@ def box_plot_w_trendline(all_VIs_stacked, vi, x_col="Distance [DAP]", value_col 
     if save_svg_path != "":
         fig.update_layout(autosize=False, width=fig_width, height=fig_height)
         fig.write_image(save_svg_path)#, scale=scale)
+    
+    if save_pdf_path != "":
+        fig.update_layout(autosize=False, width=fig_width, height=fig_height)
+        fig.write_image(save_pdf_path)#, scale=scale)
+    
     fig.show()
     
 def round_2nd_index_values(all_phenos_GDD, base=1):
@@ -224,8 +234,9 @@ all_VIs_stacked["Distance [GDD [C]]"] = (all_VIs_stacked["2nd Cum_GDD [C]"] - al
 vi = "RmB"
 _ = correlation_heatmap(all_phenos, vi, 
                         x_y_label= "Days After Planting",
-                        save_html_path="../Figures/Fig1A.html",
-                        save_svg_path="../Figures/Fig1A.svg",
+                        #save_html_path="../Figures/Fig1A.html",
+                        #save_svg_path="../Figures/Fig1A.svg",
+                        save_pdf_path="../Figures/Fig1A.pdf",
                         fig_width=450
                        )
 
@@ -236,8 +247,9 @@ _ = correlation_heatmap(all_phenos, vi,
 #FIGURE 1 B
 vi = "RmB"
 box_plot_w_trendline(all_VIs_stacked, vi, value_col="Pearson r", distance_cutoff=110,
-                     save_html_path="../Figures/Fig1B.html",
-                     save_svg_path="../Figures/Fig1B.svg",
+                     #save_html_path="../Figures/Fig1B.html",
+                     #save_svg_path="../Figures/Fig1B.svg",
+                     save_pdf_path="../Figures/Fig1B.pdf",
                      fig_width=450
                     )
 
@@ -256,8 +268,9 @@ vi = "RmB"
 _ = correlation_heatmap(round_2nd_index_values(all_phenos_GDD, base=10),
                         vi,
                         x_y_label= "Cumulative Growing Degree Days [C]",
-                        save_html_path="../Figures/SupFig2A.html",
-                        save_svg_path="../Figures/SupFig2A.svg",
+                        #save_html_path="../Figures/SupFig2A.html",
+                        #save_svg_path="../Figures/SupFig2A.svg",
+                        save_pdf_path="../Figures/SupFig2A.pdf",
                         fig_width=450
                        )
 
@@ -269,8 +282,9 @@ _ = correlation_heatmap(round_2nd_index_values(all_phenos_GDD, base=10),
 vi = "RmB"
 box_plot_w_trendline(all_VIs_stacked, vi, x_col= "Distance [GDD [C]]", value_col="Pearson r",
                      x_title = "Growthing Degree Days [C] Between Flights", distance_cutoff=2000, round_base=15,
-                     save_html_path="../Figures/SupFig2B.html",
-                     save_svg_path="../Figures/SupFig2B.svg",
+                     #save_html_path="../Figures/SupFig2B.html",
+                     #save_svg_path="../Figures/SupFig2B.svg",
+                     save_pdf_path="../Figures/SupFig2B.pdf",
                      fig_width=450
                     )
 
@@ -307,8 +321,8 @@ height = 1000
 fig.update_layout(autosize=False, width=width,height=height)
 #fix facet labels
 fig.for_each_annotation(lambda a: a.update(text=list(for_corr.keys())[int(a.text.split("=")[-1])]))
-fig.write_html("../Figures/SupFig3.html")
-fig.write_image("../Figures/SupFig3.svg")
+#fig.write_html("../Figures/SupFig3.html")
+#fig.write_image("../Figures/SupFig3.svg")
 fig.show()
 
 
@@ -342,8 +356,8 @@ fig.update_layout(margin=dict(l=0, r=1, t=30, b=1))
 width = 800
 height = 1000
 fig.update_layout(autosize=False, width=width,height=height)
-fig.write_html("../Figures/SupFig4.html")
-fig.write_image("../Figures/SupFig4.svg")
+#fig.write_html("../Figures/SupFig4.html")
+#fig.write_image("../Figures/SupFig4.svg")
 fig.show()
 
 
@@ -390,8 +404,9 @@ print(len(man_uas_stats))
 # In[15]:
 
 
-def line_plot_manual_vi_cor(man_uas_stats, man_phenos, vi, flower_DAP=flower_DAP, x="DAP", save_html_path="", save_svg_path="",
-                            xaxis_title="Days After Planting",
+def line_plot_manual_vi_cor(man_uas_stats, man_phenos, vi, flower_DAP=flower_DAP, x="DAP",
+                            save_html_path="", save_svg_path="", save_pdf_path="",
+                            xaxis_title="Days After Planting", legend_on_bottom =False,
                             fig_width=800, fig_height=400):
     if len(man_phenos) == 0:
         man_phenos = man_uas_stats["Manual Phenotype"].unique().tolist()
@@ -420,16 +435,28 @@ def line_plot_manual_vi_cor(man_uas_stats, man_phenos, vi, flower_DAP=flower_DAP
                       width=3,
                   ), fillcolor="black", opacity=0.25)
     fig.update_layout(legend_title_text='Phenotype')
-    fig.update_layout(legend=dict(yanchor="top",
-                                  y=0.99,
-                                  xanchor="right",
-                                  x=0.99))
+    if legend_on_bottom==False:
+        fig.update_layout(legend=dict(yanchor="top",
+                                      y=0.99,
+                                      xanchor="right",
+                                      x=0.99))
+    else:
+        fig.update_layout(legend=dict(yanchor="bottom",
+                                  y=-0.17,
+                                  xanchor="center",
+                                  x=0.5,
+                                  orientation="h",
+                                 ))
     
     if save_html_path != "":
         fig.write_html(save_html_path)
     if save_svg_path != "":
         fig.update_layout(autosize=False, width=fig_width, height=fig_height)
         fig.write_image(save_svg_path)#, scale=scale)
+    if save_pdf_path != "":
+        fig.update_layout(autosize=False, width=fig_width, height=fig_height)
+        fig.write_image(save_pdf_path)#, scale=scale)    
+    
     fig.show()
     return fig
 
@@ -439,9 +466,10 @@ def line_plot_manual_vi_cor(man_uas_stats, man_phenos, vi, flower_DAP=flower_DAP
 
 #FIGURE 2
 vi="GmR"
-fig = line_plot_manual_vi_cor(man_uas_stats, man_phenos=[], vi=vi,
-                              save_html_path="../Figures/Fig2.html",
-                              save_svg_path="../Figures/Fig2.svg",
+fig = line_plot_manual_vi_cor(man_uas_stats, man_phenos=["Yield","DTA","DTS","PHT","EHT"], vi=vi,
+                              #save_html_path="../Figures/Fig2.html",
+                              #save_svg_path="../Figures/Fig2.svg",
+                              save_pdf_path="../Figures/Fig2.pdf"
                              )
 
 
@@ -454,9 +482,16 @@ fig = line_plot_manual_vi_cor(man_uas_stats, man_phenos=[], vi=vi,
                               flower_DAP=flower_GDD,
                               x="Cum_GDD [C]",
                               xaxis_title="Cumulative Growing Degree Days [C]",
-                              save_html_path="../Figures/SupFig5.html",
-                              save_svg_path="../Figures/SupFig5.svg",
+                              #save_html_path="../Figures/SupFig5.html",
+                              #save_svg_path="../Figures/SupFig5.svg",
+                              legend_on_bottom=True
                              )
+
+
+# In[ ]:
+
+
+
 
 
 # In[18]:
@@ -482,8 +517,8 @@ fig.update_layout(legend=dict(yanchor="bottom",
                               orientation="h",
                              ))
 
-fig.write_html("../Figures/SupFig6.html")
-fig.write_image("../Figures/SupFig6.svg")
+#fig.write_html("../Figures/SupFig6.html")
+#fig.write_image("../Figures/SupFig6.svg")
 fig.show()
 
 

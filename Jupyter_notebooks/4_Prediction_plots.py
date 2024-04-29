@@ -112,7 +112,7 @@ sng_long_pred = add_DAP(temp_VIs, sng_long_pred)
 sim_CIs = run_tukey(sng_long_pred) #run anova
 
 
-# In[12]:
+# In[8]:
 
 
 #FIGURE 5
@@ -129,10 +129,10 @@ fig.update_layout(showlegend=False)
 width = 500
 height = 500
 fig.update_layout(autosize=False, width=width,height=height)
-fig.write_html("../Figures/Fig5.html")
-fig.write_image("../Figures/Fig5.svg")
-fig.write_image("../Figures/Fig5.png")
-
+#fig.write_html("../Figures/Fig5.html")
+#fig.write_image("../Figures/Fig5.svg")
+#fig.write_image("../Figures/Fig5.png")
+fig.write_image("../Figures/Fig5.pdf")
 fig.show()
 
 #ALT FIGURE 5
@@ -150,8 +150,7 @@ fig.show()
 
 
 
-# In[13]:
-
+# In[9]:
 
 
 def tukey_simultanious_fig(sim_CIs, save_html_path="", save_svg_path="", width=900, height=750):
@@ -184,17 +183,18 @@ def tukey_simultanious_fig(sim_CIs, save_html_path="", save_svg_path="", width=9
     fig.show()
 
 
-# In[14]:
+# In[10]:
 
 
 #FIGURE 6
 tukey_simultanious_fig(sim_CIs,
                        #save_html_path="../Figures/Fig6.html",
                        #save_svg_path="../Figures/Fig6_noMod.svg"
+                       #save_svg_path="../Figures/Fig6_noMod.pdf"
                       )
 
 
-# In[15]:
+# In[11]:
 
 
 sng_long_pred_noPHT = process_labels(sng_long_pred_noPHT)
@@ -202,10 +202,10 @@ sng_long_pred_noPHT = add_DAP(temp_VIs, sng_long_pred_noPHT)
 sim_CIs_noPHT = run_tukey(sng_long_pred_noPHT) #run anova
 
 
-# In[16]:
+# In[12]:
 
 
-#SUP FIGURE 8
+#SUP FIGURE 9
 tukey_simultanious_fig(sim_CIs_noPHT,
                        #save_html_path="../Figures/SupFig8.html",
                        #save_svg_path="../Figures/SupFig8.svg"

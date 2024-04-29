@@ -70,7 +70,7 @@ vc_all_VIs["Explaned Percent Variation (%)"] = vc_all_VIs["Explaned Percent Vari
 
 
 
-# In[7]:
+# In[4]:
 
 
 #plot heights by date and value
@@ -118,27 +118,27 @@ def plot_heights(df_stacked, flower_DAP=flower_DAP, x_col="DAP", value_col="Heig
     return fig
 
 
-# In[4]:
+# In[5]:
 
 
 #FIGURE 3A
 fig3A = plot_heights(temp_ht, x_col="DAP",
-                   save_html_path="../Figures/Fig3A.html",
-                   save_svg_path="../Figures/Fig3A.svg",
+                   #save_html_path="../Figures/Fig3A.html",
+                   #save_svg_path="../Figures/Fig3A.svg",
                   )
 
 
-# In[5]:
+# In[6]:
 
 
 #SUP FIG 7
 fig = plot_heights(temp_ht, flower_DAP=flower_GDD, x_col="Cum_GDD [C]", xaxis_title="Cumulative Growing Degree Days [C]",
-             save_html_path="../Figures/SupFig7.html",
-             save_svg_path="../Figures/SupFig7.svg",
+             #save_html_path="../Figures/SupFig7.html",
+             #save_svg_path="../Figures/SupFig7.svg",
             )
 
 
-# In[6]:
+# In[7]:
 
 
 #FIGURE 3B
@@ -199,8 +199,8 @@ def dist_plots():
                                   #font_size=5,
                                  ))
 
-    fig.write_html("../Figures/Fig3B.html")
-    fig.write_image("../Figures/Fig3B.svg")#, scale=scale)
+    #fig.write_html("../Figures/Fig3B.html")
+    #fig.write_image("../Figures/Fig3B.svg")#, scale=scale)
 
     fig.show()
     
@@ -214,7 +214,7 @@ fig3B = dist_plots()
 
 
 
-# In[7]:
+# In[8]:
 
 
 #FIGURE 3C
@@ -298,8 +298,8 @@ def vc_plot(man_VCs):
     fig.update_yaxes(range=(0,100), secondary_y=False)
     fig.update_yaxes(range=(0,1), secondary_y=True)
     
-    fig.write_html("../Figures/Fig3C.html")
-    fig.write_image("../Figures/Fig3C.svg")#, scale=scale)
+    #fig.write_html("../Figures/Fig3C.html")
+    #fig.write_image("../Figures/Fig3C.svg")#, scale=scale)
 
     fig.show()
     return fig
@@ -317,7 +317,8 @@ fig3C = vc_plot(man_VCs)
 
 
 #FIGURE 4
-def vc_plot_sng(vcDF, cv_order, x_variable="Flight", title="", save_html_path="", save_svg_path="", width=1000, height=450):
+def vc_plot_sng(vcDF, cv_order, x_variable="Flight", title="", save_html_path="", save_svg_path="",
+                xaxis_title="Days After Planting (DAP)", width=1000, height=450):
     #set vc order
     vcDF = vcDF.copy()
     vcDF["VC_order"] = vcDF["Variance Components"]
@@ -368,7 +369,7 @@ def vc_plot_sng(vcDF, cv_order, x_variable="Flight", title="", save_html_path=""
     fig.update_yaxes(range=(0,100), secondary_y=False)
     fig.update_yaxes(range=(0,1), secondary_y=True)
     fig.update_xaxes(range=(-1,len(mtrcsDF[x_variable])))
-    fig.update_xaxes(title="Days After Planting (DAP)")
+    fig.update_xaxes(title=xaxis_title)
     fig.update_layout(legend_traceorder="reversed")
     '''
     #add flowering time box
@@ -409,16 +410,13 @@ vcVARI_fig = vc_plot_sng(vcVARI, vc_order, title="VARI",
 # In[10]:
 
 
-vc_all_VIs
-
-
-# In[11]:
-
-
 #Sup Fig S8 
 vc_all_fig = vc_plot_sng(vc_all_VIs, vc_order, x_variable="Trait",
                          save_html_path="../Figures/SupFig8.html",
-                         save_svg_path="../Figures/SupFing8.svg"
+                         save_svg_path="../Figures/SupFig8.svg",
+                         width=1000, 
+                         height=600,
+                         xaxis_title=""
                         )
 
 
